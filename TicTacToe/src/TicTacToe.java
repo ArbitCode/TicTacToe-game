@@ -11,39 +11,91 @@ public class TicTacToe {
 
 	public static void main(String[] args) {
 
-		char[][] gameBoard = { { ' ', '|', ' ', '|', ' ' }, { '-', '+', '-', '+', '-' }, { ' ', '|', ' ', '|', ' ' },
-				{ '-', '+', '-', '+', '-' }, { ' ', '|', ' ', '|', ' ' } };
-		while (true) {
-
-			Scanner scan = new Scanner(System.in);
-			System.out.println("Enter your placement (1-9):");
-			int playerPos = scan.nextInt();
-			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
-				System.out.println("Position taken! Enter a correct Position");
-				playerPos = scan.nextInt();
-			}
-
-			placePiece(gameBoard, playerPos, "player");
-			String result = checkWinner();
-			if (result.length() > 0) {
-				System.out.println(result);
-				printGameBoard(gameBoard);
-				break;
-			}
-			Random rand = new Random();
-			int cpuPos = rand.nextInt(9) + 1;
-			while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
-				cpuPos = rand.nextInt(9) + 1;
-			}
-			placePiece(gameBoard, cpuPos, "cpu");
-			result = checkWinner();
-			if (result.length() > 0) {
-				System.out.println(result);
-				printGameBoard(gameBoard);
-				break;
-			}
+		boolean flag = true;
+		while (flag) {
+			clearConsole();
+			char[][] gameBoard = { { ' ', '|', ' ', '|', ' ' }, { '-', '+', '-', '+', '-' },
+					{ ' ', '|', ' ', '|', ' ' }, { '-', '+', '-', '+', '-' }, { ' ', '|', ' ', '|', ' ' } };
+			playerPositions.clear();
+			cpuPositions.clear();
+			System.out.println("Let's play TicTacToe game!!!");
 			printGameBoard(gameBoard);
+			while (true) {
 
+				Scanner scan = new Scanner(System.in);
+				System.out.println("Enter your placement (1-9):");
+				int playerPos = scan.nextInt();
+				while (playerPos > 9) {
+					System.out.println("Please enter position less than 9");
+					playerPos = scan.nextInt();
+				}
+				while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
+					System.out.println("Position taken! Enter a correct Position");
+					playerPos = scan.nextInt();
+				}
+				placePiece(gameBoard, playerPos, "player");
+				String result = checkWinner();
+				// String result = checkWinner();
+				if (result.length() > 0) {
+					System.out.println(result);
+					printGameBoard(gameBoard);
+					flag = playAgain();
+					break;
+				}
+				Random rand = new Random();
+				int cpuPos = rand.nextInt(9) + 1;
+				while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
+					cpuPos = rand.nextInt(9) + 1;
+				}
+				placePiece(gameBoard, cpuPos, "cpu");
+				result = checkWinner();
+				if (result.length() > 0) {
+					System.out.println(result);
+					printGameBoard(gameBoard);
+					flag = playAgain();
+					break;
+				}
+				printGameBoard(gameBoard);
+
+			}
+		}
+
+	}
+
+	private static final void clearConsole() {
+		try {
+			final String os = System.getProperty("os.name");
+			if (os.contains("windows")) {
+				Runtime.getRuntime().exec("cls");
+			} else {
+				Runtime.getRuntime().exec("clear");
+
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+	private static boolean playAgain() {
+		// TODO Auto-generated method stub
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Do you want Play again enter Y/N");
+		while (true) {
+			String nextHope = scan.next();
+			if (nextHope.equals("Y") | nextHope.equals("y")) {
+				return true;
+
+			}
+
+			if (nextHope.equals("N") | nextHope.equals("n")) {
+
+				System.out.println("Thank you! you can retry again!!");
+				return false;
+
+			} else {
+				System.out.println("Please enter valid text (Y/N)");
+			}
 		}
 	}
 
@@ -60,7 +112,7 @@ public class TicTacToe {
 		List<List> winning = new ArrayList<List>();
 
 		winning.add(topRow);
-		winning.add(midCol);
+		winning.add(midRow);
 		winning.add(botRow);
 		winning.add(leftCol);
 		winning.add(midCol);
@@ -69,12 +121,20 @@ public class TicTacToe {
 		winning.add(cross2);
 
 		for (List l : winning) {
-			if (playerPositions.containsAll(l)) {
-				return "Congratulations you won!";
-			} else if (cpuPositions.containsAll(l)) {
-				return "CPU wins! sorry :(";
+			if (playerPositions.size() + cpuPositions.size() < 9) {
+				if (playerPositions.containsAll(l)) {
+					return "Congratulations you won! ):";
+				} else if (cpuPositions.containsAll(l)) {
+					return "CPU wins! sorry :(";
+				}
 			} else if (playerPositions.size() + cpuPositions.size() == 9) {
+				if (playerPositions.containsAll(l)) {
+					return "Congratulations you won! ):";
+				} else if (cpuPositions.containsAll(l)) {
+					return "CPU wins! sorry :(";
+				}
 				return "tie-break";
+
 			}
 		}
 
